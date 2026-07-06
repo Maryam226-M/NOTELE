@@ -30,7 +30,4 @@ into Notion, categorized and searchable — no more lost ideas.
 - (possibly) an AI model node for smart categorization
 
 ## Status
-🚧 Just started — Day 1 of 30.
-🧚
-## Daily log
-- **Day 1**: Project created, repo set up, planning architecture.
+See [CHANGELOG.md](./CHANGELOG.md) for daily progress.
