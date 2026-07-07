@@ -35,11 +35,13 @@ Status legend: ✅ Done · 🚧 In progress · ⏳ Planned · ❌ Blocked
 |------|--------|
 | Connect Telegram Bot API | ⏳ Planned |
 | Test message ingestion into n8n | ⏳ Planned |
+<details>
 
-
-_Add details here._
-
+Connected Telegram Bot API | ✅Done
+Faced problems with n8n tunnel!
+Working to solve it.
 </details>
 
----
+## Day 3 _ 8.7.2026
+
 -->
