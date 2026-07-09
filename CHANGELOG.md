@@ -56,9 +56,14 @@ Working to solve it.
 
 - **Problem 3:** Tried n8n's built-in `--tunnel` flag — no tunnel URL ever appeared in logs.
   **Cause:** Discovered n8n officially discontinued their built-in Tunnel Service (March 2026). The flag is deprecated/non-functional now.
-  **Fix:** Switching to Cloudflare Tunnel instead (free, and gives a permanent URL tied to my own domain, unlike ngrok's free tier which changes on every restart).
+  **Fix:** Switching to Cloudflare Tunnel instead (free, and gives a permanent URL tied to my own domain, unlike ngrok's free tier, which changes on every restart).
 
 - **Decision:** Going with Cloudflare Tunnel over ngrok since I already own a domain — avoids the "URL changes every restart" issue and stays free long-term.
 
+-**Results:** Registered a free domain, DigitalPlat Domains, connected it to Cloudflare, and installed it to expose n8n securely.
+
+              Updated n8n's webhook URL to the new public address and reactivated the Telegram trigger.
+
+              Sent a test message from Telegram. It arrived successfully in n8n's execution log.🤭
 </details>
 -->
