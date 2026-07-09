@@ -42,6 +42,23 @@ Faced problems with n8n tunnel!
 Working to solve it.
 </details>
 
-## Day 3 _ 8.7.2026
+## Day 4 _ 9.7.2026
 
+<details>
+<summary> Debugging log</summary>
+
+- **Problem 1:** Container kept disappearing between sessions.
+  **Cause:** Used the `--rm` flag, which auto-deletes the container on stop.
+  **Fix:** Rebuilt with `-d --restart unless-stopped` instead — container now persists and survives reboots.
+
+- **Problem 2:** Telegram rejected the webhook with "HTTPS URL required."
+  **Cause:** `localhost` isn't reachable from the public internet; Telegram requires a real public HTTPS address.
+
+- **Problem 3:** Tried n8n's built-in `--tunnel` flag — no tunnel URL ever appeared in logs.
+  **Cause:** Discovered n8n officially discontinued their built-in Tunnel Service (March 2026). The flag is deprecated/non-functional now.
+  **Fix:** Switching to Cloudflare Tunnel instead (free, and gives a permanent URL tied to my own domain, unlike ngrok's free tier which changes on every restart).
+
+- **Decision:** Going with Cloudflare Tunnel over ngrok since I already own a domain — avoids the "URL changes every restart" issue and stays free long-term.
+
+</details>
 -->
