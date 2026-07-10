@@ -62,8 +62,25 @@ Working to solve it.
 
 -**Results:** Registered a free domain, DigitalPlat Domains, connected it to Cloudflare, and installed it to expose n8n securely.
 
-              Updated n8n's webhook URL to the new public address and reactivated the Telegram trigger.
 
-              Sent a test message from Telegram. It arrived successfully in n8n's execution log.🤭
+## Day 5 10.7.2026
+
+| Task | Status |
+|---|---|
+| Diagnose Cloudflare named tunnel setup | ✅ Done |
+| Create missing `config.yml` for tunnel | ✅ Done |
+| Route custom domain to tunnel via DNS | ✅ Done |
+| Fix broken `credentials-file` path in config | ✅ Done |
+| Successfully run tunnel and confirm Telegram message reaches n8n | ✅ Done |
+| Connected Notion with the workflow|  ✅ Done |
+| A new page was created in the Database of Notoin| ✅ Done |
+<details>
+<summary>Notes</summary>
+
+- Tunnel was created earlier, but `config.yml` was never generated — had to create it manually with `tunnel`, `credentials-file`, and `ingress` fields.
+- Learned that `cloudflared tunnel route dns <name> <hostname>` must be run once to link the custom domain to the tunnel in Cloudflare DNS.
+- Hit a `credentials-file doesn't exist` error caused by a leftover placeholder in `config.yml` instead of the real tunnel ID — fixed by matching the filename in the `.cloudflared/` folder exactly.
+ 
+
 </details>
 -->
