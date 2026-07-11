@@ -5,7 +5,7 @@ Part of my **30-Day Build Challenge**.
 ## What is this?
 Notele is a personal automation assistant built with **n8n**. 
 I send messages to a dedicated Telegram chat — scholarships, opportunities, 
-random ideas, tasks — and Sortify automatically reads them, figures out 
+random ideas, tasks — and *Notele* automatically reads them, figures out 
 what category they belong to, and organizes them into a Notion database 
 With the right details and timestamp.
 🧚
