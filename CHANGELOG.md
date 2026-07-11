@@ -84,3 +84,23 @@ Working to solve it.
 
 </details>
 -->
+
+## Day 6  11.7.2026
+
+| Task | Status |
+|---|---|
+| Fix Notion field mapping, so Telegram message text saves correctly | ✅ Done |
+| Map Telegram message date (Unix timestamp) into Notion Date field | ✅ Done |
+| Fix incorrect date conversion (timezone/format issue) | ✅ Done |
+| End-to-end test: Telegram → n8n → Notion with correct text + date | ✅ Done |
+
+<details>
+<summary>Notes</summary>
+
+- Notion page was created, but message text field was empty — turned out the field wasn't in "expression" mode in the Notion node, so it wasn't pulling `{{ $json. message.text }}` dynamically.
+- Telegram sends dates as Unix timestamps (seconds), which Notion can't read directly — had to convert using `new Date($json.message.date * 1000).toISOString()`.
+- Ran into a timezone mismatch (date showing off by a day/hours) — fixed by explicitly converting to local timezone using `toLocaleString()` with `timeZone: 'Africa/Cairo'`.
+- ✅ Big milestone: full pipeline works — Telegram message → n8n → correctly saved in Notion with accurate text and timestamp.
+- Next up: add categorization logic (keyword-based first, then AI) so messages sort automatically instead of landing uncategorized.
+
+</details>
