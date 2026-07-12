@@ -103,4 +103,8 @@ Working to solve it.
 - ✅ Big milestone: full pipeline works — Telegram message → n8n → correctly saved in Notion with accurate text and timestamp.
 - Next up: add categorization logic (keyword-based first, then AI) so messages sort automatically instead of landing uncategorized.
 
-</details>
+</details> 
+
+## Day 7 12.7.2026
+
+## Planning for the next phase.
