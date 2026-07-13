@@ -108,3 +108,23 @@ Working to solve it.
 ## Day 7 12.7.2026
 
 ## Planning for the next phase.
+
+
+## Day 8  July 13, 2026
+
+| Task | Status |
+|---|---|
+| Debug Code node error (undefined `message.text` on non-text updates) | ✅ Done |
+| Debug Notion "type null not assignable" error on Category property | ✅ Done |
+| Implement prefix-based categorization (S/O/T/I) with keyword fallback | ✅ Done |
+| Plan dynamic Categories lookup via Notion database | 🔜 Planned for tomorrow |
+
+<details>
+<summary>Notes</summary>
+
+- Code node was crashing on Telegram updates without a `message` field (e.g., edited messages, channel posts). Fixed by adding a guard clause that skips/returns `null` for those instead of erroring.
+- Notion rejected page creation with `type null is not assignable to type` — root cause was the Category select property missing an option that the workflow was trying to send. Fixed by ensuring all category names exist as options in the Notion select field.
+- Switched primary categorization method from pure keyword-matching to prefix shortcuts (e.g., `S` for Scholarship, `O` for Opportunity) for more reliable, deterministic sorting. Keyword matching was kept as a fallback for messages sent without a prefix.
+- Next step: move the prefix → category mapping out of the Code node and into a small Notion "Categories" database, so new categories can be added without editing the workflow. Design is planned; implementation tomorrow.
+
+</details>
