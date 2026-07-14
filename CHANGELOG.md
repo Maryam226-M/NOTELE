@@ -128,3 +128,18 @@ Working to solve it.
 - Next step: move the prefix → category mapping out of the Code node and into a small Notion "Categories" database, so new categories can be added without editing the workflow. Design is planned; implementation tomorrow.
 
 </details>
+
+## Day 9  14.7.2026
+| Task | Status |
+|---|---|
+| Dynamic category lookup (Notion-based, no more hardcoded letters) | 🟡 In Progress |
+
+<details>
+<summary>Notes</summary>
+
+Replaced hardcoded if-else letter mapping in the categorization Code node
+With a dynamic lookup from a new "Sortify Categories" Notion database.
+Adding a new category now means adding a row in Notion — zero n8n edits
+Needed once this is fully working.
+
+</details>
