@@ -132,13 +132,13 @@ Working to solve it.
 ## Day 9  14.7.2026
 | Task | Status |
 |---|---|
-| Dynamic category lookup (Notion-based, no more hardcoded letters) | 🟡 In Progress |
+| Dynamic category lookup (Notion-based, no more hardcoded letters) | ✅ Done |
 
 <details>
 <summary>Notes</summary>
 
 Replaced hardcoded if-else letter mapping in the categorization Code node
-With a dynamic lookup from a new "Sortify Categories" Notion database.
+With a dynamic lookup from a new "Categories" Notion database.
 Adding a new category now means adding a row in Notion — zero n8n edits
 Needed once this is fully working.
 
