@@ -143,3 +143,7 @@ Adding a new category now means adding a row in Notion — zero n8n edits
 Needed once this is fully working.
 
 </details>
+
+
+## Day 10 15.7.2025
+## Facing some problems with link pulling.
