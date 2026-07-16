@@ -147,3 +147,10 @@ Needed once this is fully working.
 
 ## Day 10 15.7.2025
 ## Facing some problems with link pulling.
+
+
+## Day 11 16.7.2026
+## The whole pipeline is facing some problems.
+## Working on that.
+
+
