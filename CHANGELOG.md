@@ -153,4 +153,8 @@ Needed once this is fully working.
 ## The whole pipeline is facing some problems.
 ## Working on that.
 
+## Day 12 17.7.2026
+<details>
 
+Found the reason why that happened.
+</details>
