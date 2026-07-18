@@ -146,15 +146,31 @@ Needed once this is fully working.
 
 
 ## Day 10 15.7.2025
-## Facing some problems with link pulling.
-
+ Facing some problems with link pulling.
 
 ## Day 11 16.7.2026
-## The whole pipeline is facing some problems.
-## Working on that.
+ The whole pipeline is facing some problems.
+Working on that.
 
 ## Day 12 17.7.2026
 <details>
 
 Found the reason why that happened.
+</details>
+
+## Day 13 18.7.2026
+<details> 
+
+Debugging log
+
+**Problem 1**: Telegram API kept returning empty arrays []. Cause: The getUpdates method requires an explicit offset parameter to know which messages to send next; without persistent memory, it gets stuck. Fix: Added n8n getWorkflowStaticData nodes to securely remember the highest processed update_id between Docker restarts.
+
+**Problem 2**: Code nodes threw a 'json' property isn't an object and only processed the first message in a batch. Cause: Wrong Code Node modes. Used .first() and returned arrays [{json}] in "Run Once for Each Item" mode, which breaks n8n's execution loop. Also had a redundant "Split Out" node blocking the flow. Fix: Standardized node modes—used $input.item.json and returned single objects {json} (no brackets) for per-item processing. Deleted the unnecessary Split Out node.
+
+**Problem 3**: Category matching failed (always defaulted to "Uncategorized"). Cause: Code was looking for deep, nested Notion API structures (properties.Letter.rich_text), but the n8n Notion node actually outputs flattened JSON objects. Fix: Inspected the raw node output and updated the matching logic to use the exact flat keys (property_letter and property_category_name).
+
+**Problem 4**: Notion Create Page node threw Can't determine which item to use. Cause: Tried using complex static referencing syntax to grab raw Telegram text. Fix: Mapped the node directly to the clean variables outputted by the final Code node (e.g., {{ $json.cleanText }}), which n8n loops for multiple items automatically.
+
+**Results**: Fully working 9-node batch-processing workflow. Can now send formatted messages (e.g., "T buy groceries") to a Telegram bot all day while offline, boot up Docker, and have n8n perfectly extract the URL, strip the category letter, match it to the correct Notion database, and create clean pages in one click. No 24/7 webhooks or Cloudflare tunnels are needed for the Telegram side.
+
 </details>
