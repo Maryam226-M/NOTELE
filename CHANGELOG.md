@@ -171,6 +171,9 @@ Debugging log
 
 **Problem 4**: Notion Create Page node threw Can't determine which item to use. Cause: Tried using complex static referencing syntax to grab raw Telegram text. Fix: Mapped the node directly to the clean variables outputted by the final Code node (e.g., {{ $json.cleanText }}), which n8n loops for multiple items automatically.
 
+## Day 14 19.7.2026
+Planning for the next feature.
+
 **Results**: Fully working 9-node batch-processing workflow. Can now send formatted messages (e.g., "T buy groceries") to a Telegram bot all day while offline, boot up Docker, and have n8n perfectly extract the URL, strip the category letter, match it to the correct Notion database, and create clean pages in one click. No 24/7 webhooks or Cloudflare tunnels are needed for the Telegram side.
 
 </details>
