@@ -180,3 +180,6 @@ Planning for the next feature.
 
 ## Day 15 20.7.2026
 In the process of adding a new feature.
+
+## Day 16 21.7.2026
+Some problems with the new function.
