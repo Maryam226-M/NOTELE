@@ -171,15 +171,51 @@ Debugging log
 
 **Problem 4**: Notion Create Page node threw Can't determine which item to use. Cause: Tried using complex static referencing syntax to grab raw Telegram text. Fix: Mapped the node directly to the clean variables outputted by the final Code node (e.g., {{ $json.cleanText }}), which n8n loops for multiple items automatically.
 
-## Day 14 19.7.2026
-Planning for the next feature.
 
 **Results**: Fully working 9-node batch-processing workflow. Can now send formatted messages (e.g., "T buy groceries") to a Telegram bot all day while offline, boot up Docker, and have n8n perfectly extract the URL, strip the category letter, match it to the correct Notion database, and create clean pages in one click. No 24/7 webhooks or Cloudflare tunnels are needed for the Telegram side.
 
 </details>
+
+## Day 14 19.7.2026
+Planning for the next feature.
 
 ## Day 15 20.7.2026
 In the process of adding a new feature.
 
 ## Day 16 21.7.2026
 Some problems with the new function.
+
+## Day 17 22.7.2026
+
+<details>
+<summary>Notes</summary>
+
+**[Feature]** 
+**Prevent Duplicate Telegram Message Processing via Offset Tracking.**
+
+**The Problem**
+
+Because the n8n instance runs locally via Docker and is not active 24/7, the workflow relies on manual execution to batch-process Telegram messages. By default, Telegram's getUpdates API returns all pending messages from the last 24 hours. This caused the workflow to create duplicate Notion pages every time it was triggered, as it had no way of remembering which messages had already been processed.
+
+**The Solution**
+
+Implemented Telegram's native offset parameter. The workflow now follows a strict stateful loop:
+
+Read: Fetch the last processed update_id from a dedicated Notion config database.
+Fetch: Request updates from Telegram using that specific offset (e.g., ?offset=45).
+Process: Parse, format, and create Notion pages for the new messages.
+Update: Calculate the highest update_id from the current batch, add 1, and overwrite the number in the Notion config database.
+Note: Notion was chosen as the persistence layer specifically because Docker containers are ephemeral in this setup. This ensures the offset survives container restarts.
+
+**Obstacles Overcome During Implementation**
+
+Notion API Data Flattening: n8n automatically flattens Notion properties, renaming Offset to property_offset. This caused initial TypeError crashes when trying to read the value using standard Notion API JSON paths. The code was updated to look for the flattened key.
+Node Data Overwrite: The "Notion Create Page" node overwrites incoming JSON with its own page creation data. This destroyed the _nextOffset variable needed for the end of the workflow. Solved by utilizing n8n's $getWorkflowStaticData('global') to temporarily store the new offset in memory during the middle of the execution, retrieving it at the very end.
+API Hanging on Manual Execution: Telegram's getUpdates defaults to long-polling (timeout=30). For a non-24/7 manual setup, this caused n8n to freeze for 30 seconds waiting for new messages. Resolved by explicitly passing ?timeout=0 in the HTTP Request node.
+Loop Prevention: Ensured the final "Update Notion" node was isolated and executed exactly once per run using the "Run Once for All Items" setting, preventing infinite workflow loops.
+
+**Result**
+
+The workflow is now idempotent. It can be started and stopped arbitrarily without creating duplicate entries. It seamlessly picks up exactly where it left off, processing only genuinely new Telegram messages regardless of how much time has passed between Docker executions.
+
+</details>
