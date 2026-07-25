@@ -230,3 +230,9 @@ Solving the data date problem.
 Solving the data date problem: Done✅
 Planning for the next step: 🚧 In progress
 </details>
+
+## Day 20 25.7.2026
+
+<details>
+Solving the categories' new bug 🚧 In progress
+</details>
