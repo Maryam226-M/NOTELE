@@ -237,7 +237,7 @@ Planning for the next step: 🚧 In progress
 Solving the categories' new bug 🚧 In progress
 </details>
 
-## Day 21 27.7.2026
+## Day 22 27.7.2026
 
 <details>
  
@@ -247,4 +247,9 @@ Solving the categories'  Done✅
  
 Imagine what the bug was....The "Notion Flattening" Trap, just one little change in the name of the database.
  
+</details>
+
+## Day 23 28.7.2026
+<details>
+In the process of adding a new feature.
 </details>
