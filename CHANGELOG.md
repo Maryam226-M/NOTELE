@@ -253,3 +253,15 @@ Imagine what the bug was....The "Notion Flattening" Trap, just one little change
 <details>
 In the process of adding a new feature.
 </details>
+
+## Day 24 29.7.2026
+<details>
+ 
+ <summary>Notes</summary>
+ 
+**🚧 Status: IN PROGRESS**
+ 
+**Feature**: File Upload Support via Google Drive Middleman.
+
+**Objective**: Expand the workflow from a text/link processor to a true "Personal Library" by allowing users to send PDFs, documents, and images to the Telegram bot, which will be saved to Google Drive and linked in Notion.
+</details>
