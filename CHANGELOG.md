@@ -268,3 +268,29 @@ In the process of adding a new feature.
 
 ## Day 25 30.7.2026
 Some problems with the new function.
+
+## Day 27 1.8.2026
+<details>
+ 
+ <summary>Notes</summary>
+ 
+**🚧 Status: IN PROGRESS**
+
+**Modified Node**: Prep Data (Code) - Added logic to detect message. document. Extracts file_id and file_name. Added itemType ("text" or "document") and fileData to the JSON output. Existing text/URL cleaning logic remains 100% untouched.
+**Added Node**: IF (Router) - Placed after Prep Data. Checks if itemType equals "document". False path routes to existing Get Categories. True path routes to new file branch.
+**Added Node**: TG Get Path - Hits Telegram getFile API using the file_id to get a temporary file path.
+**Added Node**: TG Download File - Downloads the actual file binary from Telegram. Crucial setting changed: Response Format set to "File" (outputs paperclip icon, not JSON).
+**Added Node**: GDrive Upload - Takes the binary file from the previous step, names it using the original filename (retrieved via $('Prep Data').item.json...), and uploads it to a specific Google Drive folder. Successfully outputs webContentLink.
+Current System State:
+
+Text/Link Flow: 100% Functional. Tested and confirmed working after all new additions.
+File Flow: 50% Functional. Successfully downloads PDF from Telegram and uploads it to Google Drive.
+Notion Integration: NOT YET UPDATED. Files are currently sitting in Google Drive but are not yet creating Notion pages.
+Next Steps (For Next Session):
+
+Connect the output of GDrive Upload to the input of the existing Get Categories node (merging the two branches back together).
+Add a new "File URL" property to the target Notion database.
+Update the Notion (Create Page) node to map the Google Drive webContentLink to the new Notion property.
+Run an end-to-end test with a PDF to ensure it creates the page, assigns the category, and includes the link.
+
+</details>
