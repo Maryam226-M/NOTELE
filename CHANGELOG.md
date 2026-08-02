@@ -294,3 +294,11 @@ Update the Notion (Create Page) node to map the Google Drive webContentLink to t
 Run an end-to-end test with a PDF to ensure it creates the page, assigns the category, and includes the link.
 
 </details>
+
+## Day 28 2.8.2026
+<details>
+ 
+ <summary>Notes</summary>
+ 
+ **Feature**: File Upload Support via Google Drive Middleman.  Done✅
+ </details>
