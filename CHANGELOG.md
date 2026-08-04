@@ -306,3 +306,9 @@ Run an end-to-end test with a PDF to ensure it creates the page, assigns the cat
 ## Day 29 3.8.2026
 
 **Building Notele is Done✅**
+
+## Day 30 4.8.2026
+
+**Nothing to do, yaaay** 
+**Will upload the code of the nodes soon.**
+** 🙊 **
