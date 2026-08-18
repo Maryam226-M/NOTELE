@@ -7,308 +7,367 @@ Status legend: ✅ Done · 🚧 In progress · ⏳ Planned · ❌ Blocked
 
 ---
 
-## Day 1 — 6.7.2026
+## [Unreleased]
 
-| Task | Status |
-|------|--------|
-| Set up GitHub repo and README | ✅ Done |
-| Planned overall architecture | ✅ Done |
-| Installed Docker | ✅ Done |
-| Deployed n8n self-hosted (local) | ✅ Done |
+### Planned
+- Node code export to GitHub repository
+- Enhanced error handling for edge cases
+
+---
+
+## [v1.0.0] - 2026-08-04
+
+### Added
+- **Complete end-to-end Telegram → n8n → Notion pipeline**
+  - Batch-processes messages sent to Telegram Bot
+  - Creates formatted, categorized pages in Notion database
+  - Supports text messages and URLs
+
+- **Prefix-Based Categorization System**
+  - Uses letter prefixes (S=Scholarship, O=Opportunity, T=Task, I=Info)
+  - Dynamic category lookup via Notion database
+  - Adding new categories requires zero workflow changes
+  - Keyword fallback for messages without prefixes
+
+### Fixed
+- **Telegram Offset State Management**
+  - Implemented persistent offset tracking via Notion database
+  - Prevents duplicate processing across container restarts
+  - Uses `$getWorkflowStaticData('global')` to bypass Notion node data overwrite
+  - Solves the "Docker isn't 24/7" problem elegantly
+
+- **Notion API Flattening Issues**
+  - Fixed category matching errors caused by n8n's property renaming
+  - Updated all references to use flattened keys (`property_letter`, `property_category_name`)
+  - Resolved "type null is not assignable" errors with proper select field options
+
+- **Code Node Execution Modes**
+  - Corrected `$input.item.json` vs `$input.first().json` confusion
+  - Standardized per-item processing with single-object returns
+  - Removed redundant "Split Out" node blocking the flow
+
+- **Timezone and Date Handling**
+  - Converted Telegram Unix timestamps to ISO strings
+  - Applied Africa/Cairo timezone for local date display
+  - Fixed day-off-by-one errors
+
+### Changed
+- **Categorization Logic**: Moved from hardcoded if-else to dynamic Notion database lookup
+- **State Management**: Switched from volatile `getWorkflowStaticData` to Notion persistence (survives container restarts)
+- **Telegram API Calls**: Changed `timeout=0` to prevent long-polling freezes on manual execution
+- **Notion Update Node**: Isolated to "Run Once for All Items" to prevent infinite workflow loops
+
+### Removed
+- Hardcoded category mappings
+- Deprecated n8n built-in tunnel (discontinued March 2026)
+- ~~Google Drive File Upload Feature~~ (Removed after OAuth implementation difficulties)
+
+### Security
+- **Cloudflare Tunnel**: Secured local n8n instance with HTTPS and custom domain
+
+## Development Log
+
+### Week 1: Foundation & First Hurdles (Days 1-7)
+
+<details>
+<summary><b>Day 1 — 6.7.2026 — "Let's Build Something"</b></summary>
+
+**Tasks:**
+- ✅ Set up GitHub repo and README
+- ✅ Planned overall architecture
+- ✅ Installed Docker
+- ✅ Deployed n8n self-hosted (local)
 
 **Notes:**
+The first day was all about laying the groundwork. Got Docker running, n8n UI accessible, and the initial repo structure in place. Felt like a clean start — little did I know what was coming.
+
+**Next:** Connect Telegram Bot API and test message ingestion.
+</details>
+
 <details>
-<summary>Details</summary>
+<summary><b>Day 2 — 7.7.2026 — "Telegram Tango Begins"</b></summary>
 
-- Created the repo and drafted the initial README.
-- Installed Docker Desktop/Engine on the local machine.
-- Ran n8n via a Docker self-hosted setup and confirmed the UI is accessible.
-- Next: connect Telegram Bot API and test message ingestion.
+**Tasks:**
+- ✅ Connected Telegram Bot API 
+- ⏳ Test message ingestion into n8n
 
+**Notes:**
+Got the bot token configured, but the n8n tunnel decided to play hard to get. Spent the day wrestling with connectivity — this is where I learned that the built-in tunnel was officially deprecated. Fun times.
+</details>
+
+<details>
+<summary><b>Day 4 — 9.7.2026 — "Debugging Day from Hell"</b></summary>
+
+**Debugging Log:**
+
+**Problem 1: Container Vanishing Act**
+- **Issue:** Container kept disappearing between sessions
+- **Cause:** Used the `--rm` flag, which auto-deletes containers on stop
+- **Fix:** Rebuilt with `-d --restart unless-stopped` — now survives reboots
+
+**Problem 2: Telegram Webhook Requirements**
+- **Issue:** "HTTPS URL required" error
+- **Cause:** `localhost` isn't publicly reachable; Telegram requires HTTPS
+- **Fix:** Needed a tunneling solution (enter Cloudflare)
+
+**Problem 3: Dead n8n Tunnel**
+- **Issue:** No tunnel URL appeared despite using `--tunnel` flag
+- **Cause:** n8n officially discontinued their built-in Tunnel Service (March 2026)
+- **Fix:** Switched to Cloudflare Tunnel
+
+**Decision Point:**
+> "Going with Cloudflare Tunnel over ngrok. I already own a domain — avoids the 'URL changes every restart' issue and stays free long-term."
+
+**Results:**
+✅ Registered a free domain via DigitalPlat Domains  
+✅ Connected it to Cloudflare  
+✅ Installed Cloudflare Tunnel to expose n8n securely
+</details>
+
+<details>
+<summary><b>Day 5 — 10.7.2026 — "Tunnel Breakthrough"</b></summary>
+
+**Tasks:**
+- ✅ Diagnose Cloudflare named tunnel setup
+- ✅ Create missing `config.yml` for tunnel
+- ✅ Route custom domain to tunnel via DNS
+- ✅ Fix broken credentials-file path in config
+- ✅ Successfully run tunnel and confirm Telegram message reaches n8n
+- ✅ Connected Notion with the workflow
+- ✅ First Notion page created!
+
+**Notes:**
+🎉 **BIG WIN!** The tunnel was created earlier, but `config.yml` was never generated — had to create it manually with tunnel, credentials-file, and ingress fields.
+
+**Key Learnings:**
+- `cloudflared tunnel route dns <name> <hostname>` must be run once to link the custom domain
+- Credentials-file errors are usually path mismatches — fixed by matching the filename in `.cloudflared/` folder exactly
+</details>
+
+<details>
+<summary><b>Day 6 — 11.7.2026 — "First End-to-End Pipeline"</b></summary>
+
+**Tasks:**
+- ✅ Fix Notion field mapping (message text saves correctly)
+- ✅ Map Telegram message date (Unix timestamp) into Notion Date field
+- ✅ Fix incorrect date conversion (timezone/format issue)
+- ✅ End-to-end test: Telegram → n8n → Notion with correct text + date
+
+**Notes:**
+🚀 **MILESTONE ACHIEVED!** Full pipeline works — Telegram message → n8n → correctly saved in Notion with accurate text and timestamp.
+
+**Lessons Learned:**
+- Notion pages were created but message text field was empty — the field wasn't in "expression" mode, so it wasn't pulling `{{ $json.message.text }}` dynamically
+- Telegram sends dates as Unix timestamps (seconds) → Notion can't read directly → converted using `new Date($json.message.date * 1000).toISOString()`
+- Timezone mismatch fixed by converting to `Africa/Cairo` using `toLocaleString()`
+
+**Next:** Add categorization logic (keyword-based first, then AI).
+</details>
+
+<details>
+<summary><b>Day 7 — 12.7.2026 — "Planning Phase"</b></summary>
+
+**Notes:**
+Took time to plan the categorization architecture. Decided on prefix-based shortcuts (S/O/T/I) for deterministic sorting, with keyword matching as fallback.
 </details>
 
 ---
 
-## Day 2 — 7.7.2026
+### Week 2: Refinement & Categorization (Days 8-14)
 
-| Task | Status |
-|------|--------|
-| Connect Telegram Bot API | ⏳ Planned |
-| Test message ingestion into n8n | ⏳ Planned |
 <details>
+<summary><b>Day 8 — 13.7.2026 — "Category System Takes Shape"</b></summary>
 
-Connected Telegram Bot API | ✅Done
-Faced problems with n8n tunnel!
-Working to solve it.
+**Tasks:**
+- ✅ Debug Code node error (`undefined message.text` on non-text updates)
+- ✅ Debug Notion "type null not assignable" error on Category property
+- ✅ Implement prefix-based categorization (S/O/T/I) with keyword fallback
+- 🔜 Plan dynamic Categories lookup via Notion database (tomorrow)
+
+**Notes:**
+The Code node was crashing on Telegram updates without a `message` field (e.g., edited messages, channel posts). Fixed with a guard clause that skips/returns `null` for those.
+
+Notion rejected page creation with `type null is not assignable to type` — root cause was the Category select property missing an option that the workflow was trying to send. Fixed by ensuring all category names exist as options in Notion.
+
+**Decision:**
+> "Switched primary categorization method from pure keyword-matching to prefix shortcuts (e.g., S for Scholarship, O for Opportunity). Keyword matching kept as fallback for messages without a prefix."
 </details>
 
-## Day 4 _ 9.7.2026
-
 <details>
-<summary> Debugging log</summary>
+<summary><b>Day 9 — 14.7.2026 — "Dynamic Categories Go Live"</b></summary>
 
-- **Problem 1:** Container kept disappearing between sessions.
-  **Cause:** Used the `--rm` flag, which auto-deletes the container on stop.
-  **Fix:** Rebuilt with `-d --restart unless-stopped` instead — container now persists and survives reboots.
+**Tasks:**
+- ✅ Dynamic category lookup (Notion-based, no more hardcoded letters)
 
-- **Problem 2:** Telegram rejected the webhook with "HTTPS URL required."
-  **Cause:** `localhost` isn't reachable from the public internet; Telegram requires a real public HTTPS address.
-
-- **Problem 3:** Tried n8n's built-in `--tunnel` flag — no tunnel URL ever appeared in logs.
-  **Cause:** Discovered n8n officially discontinued their built-in Tunnel Service (March 2026). The flag is deprecated/non-functional now.
-  **Fix:** Switching to Cloudflare Tunnel instead (free, and gives a permanent URL tied to my own domain, unlike ngrok's free tier, which changes on every restart).
-
-- **Decision:** Going with Cloudflare Tunnel over ngrok since I already own a domain — avoids the "URL changes every restart" issue and stays free long-term.
-
--**Results:** Registered a free domain, DigitalPlat Domains, connected it to Cloudflare, and installed it to expose n8n securely.
-
-
-## Day 5 10.7.2026
-
-| Task | Status |
-|---|---|
-| Diagnose Cloudflare named tunnel setup | ✅ Done |
-| Create missing `config.yml` for tunnel | ✅ Done |
-| Route custom domain to tunnel via DNS | ✅ Done |
-| Fix broken `credentials-file` path in config | ✅ Done |
-| Successfully run tunnel and confirm Telegram message reaches n8n | ✅ Done |
-| Connected Notion with the workflow|  ✅ Done |
-| A new page was created in the Database of Notoin| ✅ Done |
-<details>
-<summary>Notes</summary>
-
-- Tunnel was created earlier, but `config.yml` was never generated — had to create it manually with `tunnel`, `credentials-file`, and `ingress` fields.
-- Learned that `cloudflared tunnel route dns <name> <hostname>` must be run once to link the custom domain to the tunnel in Cloudflare DNS.
-- Hit a `credentials-file doesn't exist` error caused by a leftover placeholder in `config.yml` instead of the real tunnel ID — fixed by matching the filename in the `.cloudflared/` folder exactly.
- 
-
-</details>
--->
-
-## Day 6  11.7.2026
-
-| Task | Status |
-|---|---|
-| Fix Notion field mapping, so Telegram message text saves correctly | ✅ Done |
-| Map Telegram message date (Unix timestamp) into Notion Date field | ✅ Done |
-| Fix incorrect date conversion (timezone/format issue) | ✅ Done |
-| End-to-end test: Telegram → n8n → Notion with correct text + date | ✅ Done |
-
-<details>
-<summary>Notes</summary>
-
-- Notion page was created, but message text field was empty — turned out the field wasn't in "expression" mode in the Notion node, so it wasn't pulling `{{ $json. message.text }}` dynamically.
-- Telegram sends dates as Unix timestamps (seconds), which Notion can't read directly — had to convert using `new Date($json.message.date * 1000).toISOString()`.
-- Ran into a timezone mismatch (date showing off by a day/hours) — fixed by explicitly converting to local timezone using `toLocaleString()` with `timeZone: 'Africa/Cairo'`.
-- ✅ Big milestone: full pipeline works — Telegram message → n8n → correctly saved in Notion with accurate text and timestamp.
-- Next up: add categorization logic (keyword-based first, then AI) so messages sort automatically instead of landing uncategorized.
-
-</details> 
-
-## Day 7 12.7.2026
-
-## Planning for the next phase.
-
-
-## Day 8  July 13, 2026
-
-| Task | Status |
-|---|---|
-| Debug Code node error (undefined `message.text` on non-text updates) | ✅ Done |
-| Debug Notion "type null not assignable" error on Category property | ✅ Done |
-| Implement prefix-based categorization (S/O/T/I) with keyword fallback | ✅ Done |
-| Plan dynamic Categories lookup via Notion database | 🔜 Planned for tomorrow |
-
-<details>
-<summary>Notes</summary>
-
-- Code node was crashing on Telegram updates without a `message` field (e.g., edited messages, channel posts). Fixed by adding a guard clause that skips/returns `null` for those instead of erroring.
-- Notion rejected page creation with `type null is not assignable to type` — root cause was the Category select property missing an option that the workflow was trying to send. Fixed by ensuring all category names exist as options in the Notion select field.
-- Switched primary categorization method from pure keyword-matching to prefix shortcuts (e.g., `S` for Scholarship, `O` for Opportunity) for more reliable, deterministic sorting. Keyword matching was kept as a fallback for messages sent without a prefix.
-- Next step: move the prefix → category mapping out of the Code node and into a small Notion "Categories" database, so new categories can be added without editing the workflow. Design is planned; implementation tomorrow.
-
+**Notes:**
+🎉 Replaced hardcoded if-else letter mapping with dynamic lookup from a new "Categories" Notion database. Adding a new category now means adding a row in Notion — **zero n8n edits needed**.
 </details>
 
-## Day 9  14.7.2026
-| Task | Status |
-|---|---|
-| Dynamic category lookup (Notion-based, no more hardcoded letters) | ✅ Done |
-
 <details>
-<summary>Notes</summary>
+<summary><b>Day 10-12 — 15-17.7.2026 — "Pipeline Troubles"</b></summary>
 
-Replaced hardcoded if-else letter mapping in the categorization Code node
-With a dynamic lookup from a new "Categories" Notion database.
-Adding a new category now means adding a row in Notion — zero n8n edits
-Needed once this is fully working.
-
+**Notes:**
+- **Day 10:** Link pulling problems discovered
+- **Day 11:** Pipeline instability detected
+- **Day 12:** Root cause identified
 </details>
 
-
-## Day 10 15.7.2025
- Facing some problems with link pulling.
-
-## Day 11 16.7.2026
- The whole pipeline is facing some problems.
-Working on that.
-
-## Day 12 17.7.2026
 <details>
+<summary><b>Day 13 — 18.7.2026 — "Major Debugging Session"</b></summary>
 
-Found the reason why that happened.
+**Debugging Log:**
+
+**Problem 1: Empty API Responses**
+- **Issue:** Telegram API kept returning empty arrays `[]`
+- **Cause:** `getUpdates` requires an explicit `offset` parameter to know which messages to send next; without persistent memory, it gets stuck
+- **Fix:** Added n8n `getWorkflowStaticData` nodes to remember the highest processed `update_id` between Docker restarts
+
+**Problem 2: Code Node Misconfiguration**
+- **Issue:** Only processed the first message in a batch; threw `'json' property isn't an object` errors
+- **Cause:** Wrong Code Node modes. Used `.first()` and returned arrays `[{json}]` in "Run Once for Each Item" mode, breaking n8n's execution loop
+- **Fix:** Standardized node modes — used `$input.item.json` and returned single objects `{json}` (no brackets) for per-item processing
+
+**Problem 3: Category Matching Failure**
+- **Issue:** Always defaulted to "Uncategorized"
+- **Cause:** Code was looking for deep nested Notion API structures (`properties.Letter.rich_text`), but n8n outputs flattened JSON objects
+- **Fix:** Inspected raw node output and updated matching logic to use exact flat keys (`property_letter` and `property_category_name`)
+
+**Problem 4: Notion Page Creation Error**
+- **Issue:** `Can't determine which item to use` error
+- **Cause:** Tried using complex static referencing syntax to grab raw Telegram text
+- **Fix:** Mapped the node directly to clean variables outputted by the final Code node (e.g., `{{ $json.cleanText }}`), which n8n loops for multiple items automatically
+
+**Results:**
+✅ Fully working 9-node batch-processing workflow. Can now send formatted messages (e.g., "T buy groceries") all day while offline, boot up Docker, and have n8n perfectly process everything. **No 24/7 webhooks or Cloudflare tunnels needed for the Telegram side.**
 </details>
 
-## Day 13 18.7.2026
-<details> 
+<details>
+<summary><b>Day 14 — 19.7.2026 — "Planning Next Feature"</b></summary>
 
-Debugging log
-
-**Problem 1**: Telegram API kept returning empty arrays []. Cause: The getUpdates method requires an explicit offset parameter to know which messages to send next; without persistent memory, it gets stuck. Fix: Added n8n getWorkflowStaticData nodes to securely remember the highest processed update_id between Docker restarts.
-
-**Problem 2**: Code nodes threw a 'json' property isn't an object and only processed the first message in a batch. Cause: Wrong Code Node modes. Used .first() and returned arrays [{json}] in "Run Once for Each Item" mode, which breaks n8n's execution loop. Also had a redundant "Split Out" node blocking the flow. Fix: Standardized node modes—used $input.item.json and returned single objects {json} (no brackets) for per-item processing. Deleted the unnecessary Split Out node.
-
-**Problem 3**: Category matching failed (always defaulted to "Uncategorized"). Cause: Code was looking for deep, nested Notion API structures (properties.Letter.rich_text), but the n8n Notion node actually outputs flattened JSON objects. Fix: Inspected the raw node output and updated the matching logic to use the exact flat keys (property_letter and property_category_name).
-
-**Problem 4**: Notion Create Page node threw Can't determine which item to use. Cause: Tried using complex static referencing syntax to grab raw Telegram text. Fix: Mapped the node directly to the clean variables outputted by the final Code node (e.g., {{ $json.cleanText }}), which n8n loops for multiple items automatically.
-
-
-**Results**: Fully working 9-node batch-processing workflow. Can now send formatted messages (e.g., "T buy groceries") to a Telegram bot all day while offline, boot up Docker, and have n8n perfectly extract the URL, strip the category letter, match it to the correct Notion database, and create clean pages in one click. No 24/7 webhooks or Cloudflare tunnels are needed for the Telegram side.
-
+**Notes:**
+Took time to plan the next major feature — initially considered file upload support, but later decided against it.
 </details>
 
-## Day 14 19.7.2026
-Planning for the next feature.
+---
 
-## Day 15 20.7.2026
-In the process of adding a new feature.
-
-## Day 16 21.7.2026
-Some problems with the new function.
-
-## Day 17 22.7.2026
+### Week 3: Deduplication & Date Fixes (Days 15-22)
 
 <details>
-<summary>Notes</summary>
+<summary><b>Day 15-16 — 20-21.7.2026 — "New Feature Problems"</b></summary>
 
-**[Feature]** 
-**Prevent Duplicate Telegram Message Processing via Offset Tracking.**
-
-**The Problem**
-
-Because the n8n instance runs locally via Docker and is not active 24/7, the workflow relies on manual execution to batch-process Telegram messages. By default, Telegram's getUpdates API returns all pending messages from the last 24 hours. This caused the workflow to create duplicate Notion pages every time it was triggered, as it had no way of remembering which messages had already been processed.
-
-**The Solution**
-
-Implemented Telegram's native offset parameter. The workflow now follows a strict stateful loop:
-
-Read: Fetch the last processed update_id from a dedicated Notion config database.
-Fetch: Request updates from Telegram using that specific offset (e.g., ?offset=45).
-Process: Parse, format, and create Notion pages for the new messages.
-Update: Calculate the highest update_id from the current batch, add 1, and overwrite the number in the Notion config database.
-Note: Notion was chosen as the persistence layer specifically because Docker containers are ephemeral in this setup. This ensures the offset survives container restarts.
-
-**Obstacles Overcome During Implementation**
-
-Notion API Data Flattening: n8n automatically flattens Notion properties, renaming Offset to property_offset. This caused initial TypeError crashes when trying to read the value using standard Notion API JSON paths. The code was updated to look for the flattened key.
-Node Data Overwrite: The "Notion Create Page" node overwrites incoming JSON with its own page creation data. This destroyed the _nextOffset variable needed for the end of the workflow. Solved by utilizing n8n's $getWorkflowStaticData('global') to temporarily store the new offset in memory during the middle of the execution, retrieving it at the very end.
-API Hanging on Manual Execution: Telegram's getUpdates defaults to long-polling (timeout=30). For a non-24/7 manual setup, this caused n8n to freeze for 30 seconds waiting for new messages. Resolved by explicitly passing ?timeout=0 in the HTTP Request node.
-Loop Prevention: Ensured the final "Update Notion" node was isolated and executed exactly once per run using the "Run Once for All Items" setting, preventing infinite workflow loops.
-
-**Result**
-
-The workflow is now idempotent. It can be started and stopped arbitrarily without creating duplicate entries. It seamlessly picks up exactly where it left off, processing only genuinely new Telegram messages regardless of how much time has passed between Docker executions.
-
+**Notes:**
+Started working on duplicate prevention. Encountered issues with the new logic.
 </details>
 
-## Day 18 23.7.2026
 <details>
-Solving the data date problem.
+<summary><b>Day 17 — 22.7.2026 — "Offset Tracking Implemented"</b></summary>
+
+**Feature: Prevent Duplicate Telegram Message Processing via Offset Tracking**
+
+**The Problem:**
+Because n8n runs locally via Docker and isn't active 24/7, the workflow relies on manual execution to batch-process messages. Telegram's `getUpdates` API returns all pending messages from the last 24 hours, causing duplicates every time the workflow was triggered.
+
+**The Solution:**
+Implemented Telegram's native `offset` parameter with a strict stateful loop:
+
+1. **Read:** Fetch last processed `update_id` from Notion config database
+2. **Fetch:** Request updates from Telegram using that specific offset (`?offset=45`)
+3. **Process:** Parse, format, and create Notion pages for new messages
+4. **Update:** Calculate highest `update_id` + 1, update Notion config database
+
+**Why Notion for Persistence?**
+> "Docker containers are ephemeral in this setup. Notion ensures the offset survives container restarts."
+
+**Obstacles Overcome:**
+
+- **Notion API Data Flattening:** n8n automatically flattens properties, renaming `Offset` to `property_offset`. Updated code to look for the flattened key.
+- **Node Data Overwrite:** The "Notion Create Page" node overwrites incoming JSON. Solved by using `$getWorkflowStaticData('global')` to temporarily store the new offset in memory.
+- **API Hanging on Manual Execution:** Telegram's `getUpdates` defaults to long-polling (`timeout=30`). Resolved by passing `?timeout=0`.
+- **Loop Prevention:** Ensured final "Update Notion" node executes exactly once using "Run Once for All Items" setting.
+
+**Result:**
+✅ Workflow is now **idempotent**. Can start and stop arbitrarily without creating duplicate entries. Seamlessly picks up exactly where it left off.
 </details>
 
-## Day 19 24.7.2026
 <details>
-Solving the data date problem: Done✅
-Planning for the next step: 🚧 In progress
+<summary><b>Day 18-19 — 23-24.7.2026 — "Date Problems"</b></summary>
+
+**Notes:**
+- **Day 18:** Working on date formatting issues
+- **Day 19:** Date handling issues resolved ✅
+- **Next:** Planning next phase
 </details>
 
-## Day 20 25.7.2026
-
 <details>
-Solving the categories' new bug 🚧 In progress
+<summary><b>Day 20-22 — 25-27.7.2026 — "Category Bug Discovery & Fix"</b></summary>
+
+**Notes:**
+- **Day 20:** New bug in categories system discovered 🚧
+- **Day 22:** Categories bug fixed ✅
+
+> "Imagine what the bug was.... The 'Notion Flattening' Trap, just one little change in the name of the database."
+
+The categories broke because Notion property names changed. A single underscore difference caused everything to fail silently. Debugging this was... humbling.
 </details>
 
-## Day 22 27.7.2026
+---
+
+### Week 4: Final Polish & Completion (Days 23-30)
 
 <details>
- 
-Solving the categories'  Done✅
+<summary><b>Day 23-27 — 28.7-1.8.2026 — "Feature Exploration"</b></summary>
 
- <summary>Notes</summary>
- 
-Imagine what the bug was....The "Notion Flattening" Trap, just one little change in the name of the database.
- 
+**Notes:**
+Explored adding file upload support via Google Drive Middleman. After implementing 50% of the feature and encountering OAuth 401 errors, made the decision to remove it.
+
+**Why It Was Removed:**
+- OAuth implementation through Cloudflare Tunnel proved overly complex
+- Local file storage alternative was simpler and met the core need
+- Focus shifted to polishing the existing text/URL pipeline
 </details>
 
-## Day 23 28.7.2026
 <details>
-In the process of adding a new feature.
+<summary><b>Day 28-29 — 2-3.8.2026 — "The Home Stretch"</b></summary>
+
+**Notes:**
+- **Day 28:** Final testing and bug fixes
+- **Day 29:** Building Notele is Done ✅
+
+The 30-day challenge is officially complete! Notele is a fully functional personal automation assistant.
 </details>
 
-## Day 24 29.7.2026
 <details>
- 
- <summary>Notes</summary>
- 
-**🚧 Status: IN PROGRESS**
+<summary><b>Day 30 — 4.8.2026 — "Victory Lap"</b></summary>
 
-**Feature**: File Upload Support via Google Drive Middleman.
+**Notes:**
+Nothing to do today — yaaay! 🎉
 
-**Objective**: Expand the workflow from a text/link processor to a true "Personal Library" by allowing users to send PDFs, documents, and images to the Telegram bot, which will be saved to Google Drive and linked in Notion.
+Will upload the code of the nodes to GitHub soon. **🙊**
 </details>
 
-## Day 25 30.7.2026
-Some problems with the new function.
+---
 
-## Day 27 1.8.2026
-<details>
- 
- <summary>Notes</summary>
- 
-**🚧 Status: IN PROGRESS**
+## Technical Debt & Future Improvements
 
-**Modified Node**: Prep Data (Code) - Added logic to detect message. document. Extracts file_id and file_name. Added itemType ("text" or "document") and fileData to the JSON output. Existing text/URL cleaning logic remains 100% untouched.
-**Added Node**: IF (Router) - Placed after Prep Data. Checks if itemType equals "document". False path routes to existing Get Categories. True path routes to new file branch.
-**Added Node**: TG Get Path - Hits Telegram getFile API using the file_id to get a temporary file path.
-**Added Node**: TG Download File - Downloads the actual file binary from Telegram. Crucial setting changed: Response Format set to "File" (outputs paperclip icon, not JSON).
-**Added Node**: GDrive Upload - Takes the binary file from the previous step, names it using the original filename (retrieved via $('Prep Data').item.json...), and uploads it to a specific Google Drive folder. Successfully outputs webContentLink.
-Current System State:
+### Known Issues
+- Files are stored locally (volume mounted) — no cloud backup yet
+- No error notifications if the pipeline fails
 
-Text/Link Flow: 100% Functional. Tested and confirmed working after all new additions.
-File Flow: 50% Functional. Successfully downloads PDF from Telegram and uploads it to Google Drive.
-Notion Integration: NOT YET UPDATED. Files are currently sitting in Google Drive but are not yet creating Notion pages.
-Next Steps (For Next Session):
+### Planned Enhancements
+- [ ] Add AI-based categorization using OpenAI/Claude
+- [ ] Implement error notifications via Telegram
+- [ ] Create n8n workflow export for easy deployment
+- [ ] Add Docker Compose production setup
+- [ ] Explore local file storage as an alternative to Google Drive
 
-Connect the output of GDrive Upload to the input of the existing Get Categories node (merging the two branches back together).
-Add a new "File URL" property to the target Notion database.
-Update the Notion (Create Page) node to map the Google Drive webContentLink to the new Notion property.
-Run an end-to-end test with a PDF to ensure it creates the page, assigns the category, and includes the link.
+---
+## Acknowledgments
 
-</details>
+- **n8n** — The automation backbone
+- **Cloudflare** — Tunnel and domain management
+- **Notion** — The "second brain" storage layer
+- **Telegram** — The input interface
 
-## Day 28 2.8.2026
-<details>
- 
- <summary>Notes</summary>
- 
- **Feature**: File Upload Support via Google Drive Middleman.  Done✅
- </details>
+---
 
-## Day 29 3.8.2026
-
-**Building Notele is Done✅**
-
-## Day 30 4.8.2026
-
-**Nothing to do, yaaay** 
-**Will upload the code of the nodes soon.**
-** 🙊 **
+* My first Project using **n8n** Built with ❤️ and lots of ☕ during a 30-Day Build Challenge.*
