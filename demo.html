@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notele Demo - Try It Yourself</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            padding: 2rem;
+            text-align: center;
+        }
+        .badge {
+            background: #6b3fd4;
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #6b3fd4, #854fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            font-size: 1.25rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .feature {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #854fff;
+        }
+        .feature p {
+            opacity: 0.7;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        .instructions {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 2rem 0;
+            text-align: left;
+            border-left: 4px solid #6b3fd4;
+        }
+        .instructions code {
+            background: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge">🏗️ 30-Day Build Challenge</div>
+        <h1>Notele</h1>
+        <p class="subtitle">Your Personal Second Brain — Now in a Chat!</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📝 Send Messages</h3>
+                <p>Use prefixes like <code>T</code> for Tasks, <code>S</code> for Scholarships</p>
+            </div>
+            <div class="feature">
+                <h3>📂 Auto-Organize</h3>
+                <p>Messages become formatted pages in Notion — instantly</p>
+            </div>
+            <div class="feature">
+                <h3>🧠 Smart Tracking</h3>
+                <p>Never lose important info again. Everything stays organized</p>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <strong>💡 Try it:</strong> Click the chat icon in the bottom-right corner.<br>
+            Send a message with a prefix, e.g. <code>T Buy groceries</code> or <code>S MIT Scholarship</code>.<br>
+            <em>(This runs on my live n8n instance — see it work in real-time!)</em>
+        </div>
+        
+        <p style="opacity:0.5; font-size:0.8rem; margin-top: 2rem;">
+            Built with ❤️ during a 30-day challenge · <a href="https://github.com/yourusername/notele" style="color: #854fff;">View on GitHub</a>
+        </p>
+    </div>
+
+    <!-- ========== EMBED THE CHAT WIDGET HERE ========== -->
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    <script>
+        window.ChatWidgetConfig = {
+            webhook: {
+                url: 'https://notele.dpdns.org/webhook/your-chat-webhook-id', // ⚠️ Replace with your actual URL
+                route: 'general'
+            },
+            branding: {
+                name: 'Notele Assistant',
+                welcomeText: 'Hi 👋 send me a message with a prefix (T, S, O, I) and I\'ll organize it in Notion!',
+                responseTimeText: 'Processing...'
+            },
+            style: {
+                primaryColor: '#6b3fd4',
+                secondaryColor: '#854fff',
+                position: 'right',
+                backgroundColor: '#1a1a2e',
+                fontColor: '# ffffff ',
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/n8n-io/chat/widget.js"></script>
+</body>
+</html>
