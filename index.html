@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notele Demo - Try It Yourself</title>
+    
+    <!-- ========== STYLESHEET FOR THE PAGE ========== -->
     <style>
         body {
             margin: 0;
@@ -79,7 +81,17 @@
             border-radius: 4px;
             font-size: 0.9rem;
         }
+        a {
+            color: #854fff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
+
+    <!-- ========== CHAT WIDGET STYLESHEET ========== -->
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
@@ -109,12 +121,12 @@
         </div>
         
         <p style="opacity:0.5; font-size:0.8rem; margin-top: 2rem;">
-            Built with ❤️ during a 30-day challenge⭐️ · <a href="https://github.com/Maryam226-M/notele" style="color: #854fff;">View on GitHub</a>
+            Built with ❤️ during a 30-day challenge · <a href="https://github.com/Maryam226-M/notele">View on GitHub</a>
         </p>
     </div>
 
-    <!-- ========== EMBED THE CHAT WIDGET HERE ========== -->
-    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    <!-- ========== CHAT WIDGET CONFIGURATION ========== -->
+    <!-- ⚠️ IMPORTANT: This MUST be before the widget script -->
     <script>
         window.ChatWidgetConfig = {
             webhook: {
@@ -123,7 +135,7 @@
             },
             branding: {
                 name: 'Notele Assistant',
-                welcomeText: 'Hi 👋 send me a message with a prefix (T, S, O, I) and I\'ll organize it in Notion!',
+                welcomeText: 'Hi 👋 Send me a message with a prefix (T, S, O, I) and I\'ll organize it in Notion!',
                 responseTimeText: 'Processing...'
             },
             style: {
@@ -131,10 +143,13 @@
                 secondaryColor: '#854fff',
                 position: 'right',
                 backgroundColor: '#1a1a2e',
-                fontColor: '# ffffff'
+                fontColor: '#ffffff'
             }
         };
     </script>
+
+    <!-- ========== CHAT WIDGET SCRIPT ========== -->
+    <!-- ⚠️ IMPORTANT: This MUST be AFTER the config -->
     <script src="https://cdn.jsdelivr.net/gh/n8n-io/chat/widget.js"></script>
 </body>
 </html>
