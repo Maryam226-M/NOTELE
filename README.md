@@ -20,7 +20,7 @@ This isn't just for scholarships and opportunities. It's genuinely useful
 for **content creators** — anyone who gets a sudden idea for a video, post, 
 or script while scrolling or chatting, types it into Telegram to "save it 
 for later," and then can never find it again in the endless scroll of chat 
-history. Sortify catches that idea the moment it's sent and files it neatly 
+history. Notele catches that idea the moment it's sent and files it neatly 
 into Notion, categorized and searchable — no more lost ideas.
 
 ## Tech stack
